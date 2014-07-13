@@ -5,10 +5,6 @@
 
 
 ```r
-library(lattice)
-library(ggplot2)
-
-setwd('/Users/fernando_perez/Documents/workspace_R/coursera/ReproducibleResearch/RepData_PeerAssessment1/')
 Sys.setlocale("LC_TIME",locale="en_US")
 ```
 
@@ -17,6 +13,10 @@ Sys.setlocale("LC_TIME",locale="en_US")
 ```
 
 ```r
+library(lattice)
+
+setwd('/Users/fernando_perez/Documents/workspace_R/coursera/ReproducibleResearch/RepData_PeerAssessment1/')
+
 df <- read.csv(file='./activity.csv', 
                header=TRUE, 
                stringsAsFactors=FALSE)
@@ -34,8 +34,7 @@ stepsByDay <- aggregate(df[c("steps")], by=list(date=df$date),
                         FUN=sum, na.rm=TRUE)
 ```
 
-The following figure shows the histogram of the total number of steps taken 
-each day
+The following figure shows the histogram of the total number of steps taken each day
 
 
 ```r
@@ -77,8 +76,7 @@ The 5-minute interval, on average across all the days in the dataset, that conta
 
 
 
-**Note:** For the next part of the study, missing values   
-are computed as the mean for the corresponding interval across entire dataset.
+**Note:** For the next part of the study, missing values are computed as the mean for the corresponding interval across entire dataset.
 
 ## Imputing missing values
 
@@ -91,13 +89,13 @@ completeIdx <- complete.cases(df["steps"])
 
 completeData    <- df[completeIdx,]
 incompleteData  <- df[!completeIdx,]
+
 incompleteLength <- dim(incompleteData)[1]
 ```
 
 The total number of missing values in the dataset is: ***2304***
 
-Fill incomplete values with the mean for that interval  
-Merging incomplete data frame with means by interval data frame
+Fill incomplete values with the mean for that interval by merging incomplete data frame with means by interval data frame
 
 
 ```r
@@ -109,9 +107,7 @@ inferencedData<- fillIncomplete[c("steps.y", "date", "interval")]
 colnames(inferencedData) <- colnames(completeData)
 ```
 
-Join the complete cases with the inferenced cases to  
-create a new dataset that is equal to the original dataset  
-but with the missing data filled in
+Join the complete cases with the inferenced cases to create a new dataset that is equal to the original dataset but with the missing data filled in
 
 
 ```r
@@ -141,8 +137,7 @@ Mean and Median of total number of steps taken per day:
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-Following code create a factor variable (daytype) in the dataset with two levels  
-“weekday” and “weekend” indicating whether a given date is a weekday or weekend day.  
+Following code create a factor variable (daytype) in the dataset with two levels “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.  
 
 
 ```r
@@ -151,7 +146,7 @@ df2["daytype"] <- factor(weekdays(strptime(df2$date,format="%Y-%m-%d")) %in% c('
                          levels=c("FALSE","TRUE"))
 ```
 
-Calculate the mean steps by daytype
+Calculate the mean steps by daytype, interval
 
 
 ```r
@@ -160,18 +155,16 @@ stepsByInt_DayType <- aggregate(df2[c("steps")],
                                 FUN=mean, na.rm=TRUE)
 ```
 
-The following plot contains a time series plot of the 5-minute interval (x-axis)  
-and the average number of steps taken, 
-averaged across all weekday days or weekend days (y-axis).
+The following plot contains a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
 
 ```r
 xyplot(steps ~ interval|daytype, data = stepsByInt_DayType,
        type="l",
        col="blue",
-       main="Day Type",
        xlab="Interval",
-       ylab="Number of Steps")
+       ylab="Number of Steps",
+       layout=c(1,2))
 ```
 
 ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
